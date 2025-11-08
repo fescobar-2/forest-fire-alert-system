@@ -10,11 +10,17 @@ st.title("Visualizador de datos del satélite FIRMS")
 try:
     response = requests.get(API_URL)
     response.raise_for_status()
-    df = pd.DataFrame(response.json())
+    data = response.json()
 
-    st.success("Datos obtenidos correctamente desde el backend!")
-    st.dataframe(df)
-    st.subheader("Mapa de intensidad lumínica (por medida de brillo)")
+    if isinstance(data, dict) and "error" in data:
+        st.error(f"Backend error: {data['error']}")
+    else:
+        df = pd.DataFrame(data)
+        if df.empty:
+            st.warning("No hay datos disponibles para mostrar.")
+        else:
+            st.success("Datos obtenidos correctamente desde el backend!")
+            st.dataframe(df)
 
     if not df.empty:
         st.pydeck_chart(pdk.Deck(
