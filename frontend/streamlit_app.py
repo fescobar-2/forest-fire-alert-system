@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import pydeck as pdk
 
-API_URL = "https://forest-fire-alert-system-v3wp.onrender.com"
+API_URL = "https://forest-fire-alert-system-v3wp.onrender.com/data"
 
 st.title("Visualizador de datos del satélite FIRMS")
 
