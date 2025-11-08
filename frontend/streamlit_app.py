@@ -1,32 +1,20 @@
 import streamlit as st
 import requests
 import pandas as pd
-from io import StringIO
 import pydeck as pdk
 
-# CONFIG
-API_KEY = "cbae442f3a983932ea8938d9b2a76acc"  # Replace with your actual MAP_KEY
-SENSOR = "ALL"          # Can be changed by dropdown
-# URL = f"https://firms.modaps.eosdis.nasa.gov/api/data_availability/csv/{API_KEY}/{SENSOR}"
-URL = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{API_KEY}/VIIRS_NOAA20_NRT/-62.65,-27.6,-54.25,-19.3/1"
-# URL = "https://firms.modaps.eosdis.nasa.gov/api/area/csv/{API_KEY}/VIIRS_NOAA20_NRT/Paraguay/1"
+API_URL = "https://forest-fire-alert-system-v3wp.onrender.com"  # Change this to your Render backend URL when deployed
 
-st.title("🔥 FIRMS Data Availability Viewer")
-st.write(f"Sensor selected: **{SENSOR}**")
+st.title("Visualizador de datos del satélite FIRMS")
 
-# Fetch the CSV data
 try:
-    response = requests.get(URL)
+    response = requests.get(API_URL)
     response.raise_for_status()
+    df = pd.DataFrame(response.json())
 
-    # Parse CSV into DataFrame
-    csv_data = StringIO(response.text)
-    df = pd.read_csv(csv_data)
-
-    st.success("Data fetched successfully!")
-    st.write("### Available Data by Country and Date")
+    st.success("Datos obtenidos correctamente desde el backend!")
     st.dataframe(df)
-    st.subheader("🔥 Fire Intensity Map (by Brightness)")
+    st.subheader("Mapa de intensidad lumínica (por medida de brillo)")
 
     if not df.empty:
         st.pydeck_chart(pdk.Deck(
@@ -49,8 +37,7 @@ try:
             ],
         ))
 
-
-except requests.HTTPError as err:
-    st.error(f"HTTP Error: {err}")
+except requests.exceptions.RequestException as err:
+    st.error(f"Error al conectarse al backend: {err}")
 except Exception as e:
-    st.error(f"Something went wrong: {e}")
+    st.error(f"Ocurrió un error: {e}")

@@ -1,34 +1,29 @@
 from flask import Flask, jsonify
 import requests
+import pandas as pd
+from io import StringIO
 
 app = Flask(__name__)
 
-FIRMS_URL = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/viirs/viirs_snpp_global_24h.json"
+API_KEY = "cbae442f3a983932ea8938d9b2a76acc"
+URL = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{API_KEY}/VIIRS_NOAA20_NRT/-62.65,-27.6,-54.25,-19.3/1"
 
-@app.route('/fetch-firms', methods=['GET'])
-def fetch_firms():
+@app.route("/")
+def home():
+    return {"message": "Backend is running"}
+
+@app.route("/fires", methods=["GET"])
+def get_fires():
     try:
-        response = requests.get(FIRMS_URL)
-        data = response.json()
+        response = requests.get(URL)
+        response.raise_for_status()
 
-        # Extract more meaningful subset
-        simplified_data = [
-            {
-                "latitude": entry["latitude"],
-                "longitude": entry["longitude"],
-                "brightness": entry["brightness"],
-                "confidence": entry["confidence"]
-            }
-            for entry in data
-        ]
+        csv_data = StringIO(response.text)
+        df = pd.read_csv(csv_data)
 
-        return jsonify({
-            "count": len(simplified_data),
-            "fires": simplified_data
-        })
-
+        return jsonify(df.to_dict(orient="records"))
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
