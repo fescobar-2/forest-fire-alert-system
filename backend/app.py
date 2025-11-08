@@ -23,7 +23,7 @@ def get_fires():
 
         return jsonify(df.to_dict(orient="records"))
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify([])
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
