@@ -1,9 +1,12 @@
+import os
 import streamlit as st
 import requests
 import pandas as pd
 import pydeck as pdk
 
 API_URL = "https://forest-fire-alert-system-v3wp.onrender.com/data"
+MAPBOX_TOKEN = os.getenv("MAPBOX_API_KEY")
+pdk.settings.mapbox_api_key = MAPBOX_TOKEN
 
 st.title("Visualizador de datos del satélite FIRMS")
 
@@ -24,7 +27,7 @@ try:
         st.subheader("Mapa de intensidad lumínica (por medida de brillo)")
 
         st.pydeck_chart(pdk.Deck(
-            map_style="mapbox://styles/mapbox/dark-v10",
+            map_style=None,  # Disable Mapbox base
             initial_view_state=pdk.ViewState(
                 latitude=df["latitude"].mean(),
                 longitude=df["longitude"].mean(),
@@ -32,6 +35,16 @@ try:
                 pitch=40,
             ),
             layers=[
+                # Add a base map from OpenStreetMap
+                pdk.Layer(
+                    "TileLayer",
+                    data=None,
+                    min_zoom=0,
+                    max_zoom=19,
+                    tile_size=256,
+                    get_tile_url="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                ),
+                # Add your fire scatter layer
                 pdk.Layer(
                     "ScatterplotLayer",
                     data=df,
