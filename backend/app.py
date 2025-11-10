@@ -2,10 +2,13 @@ from flask import Flask, jsonify
 import requests
 import pandas as pd
 from io import StringIO
+from flask_cors import CORS
+import os
 
 app = Flask(__name__)
+CORS(app)
 
-API_KEY = "cbae442f3a983932ea8938d9b2a76acc"
+API_KEY = os.getenv("API_KEY")
 URL = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{API_KEY}/VIIRS_NOAA20_NRT/-62.65,-27.6,-54.25,-19.3/1"
 
 
