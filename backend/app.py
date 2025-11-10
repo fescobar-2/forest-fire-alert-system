@@ -9,7 +9,7 @@ API_KEY = "cbae442f3a983932ea8938d9b2a76acc"
 URL = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{API_KEY}/VIIRS_NOAA20_NRT/-62.65,-27.6,-54.25,-19.3/1"
 
 
-@app.route("/data", methods=["GET"])
+@app.route("/", methods=["GET"])
 def get_fire_data():
     try:
         response = requests.get(URL)

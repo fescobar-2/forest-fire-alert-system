@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import pydeck as pdk
 
-API_URL = "https://forest-fire-alert-system-v3wp.onrender.com/data"
+API_URL = "https://forest-fire-alert-system-v3wp.onrender.com/"
 MAPBOX_TOKEN = os.getenv("MAPBOX_API_KEY")
 pdk.settings.mapbox_api_key = MAPBOX_TOKEN
 
